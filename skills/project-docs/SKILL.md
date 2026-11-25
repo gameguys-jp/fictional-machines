@@ -1,6 +1,6 @@
 ---
 name: project-docs
-description: Fictional Machines の個別プロジェクトで文書を作成・更新・整理するときに使う。仕様（spec）、物語（story）、実在部品の台帳（parts）、製品デザイン（design）、実装（impl）、決定記録（decisions）、課題台帳（open-issues）を種類ごとに分け、記述ステータスと史実・架空の境界を守る。トリガー：「文書を整理」「仕様書を書く・直す」「物語・設定を追加」「部品台帳を作る」「決定を記録」「課題を登録」「新しい架空機のプロジェクトを始める」、Fictional Machines のプロジェクトで docs/ 以下を編集するとき。Use when creating, updating, or reorganizing documentation in a Fictional Machines project.
+description: Fictional Machines の個別プロジェクトで文書を作成・更新・整理するときに使う。仕様（spec）、物語（story）、実在部品の台帳（parts）、製品デザイン（design）、実装（impl）、決定記録（decisions）、課題台帳（open-issues）を種類ごとに分け、記述ステータスと史実・架空の境界を守る。トリガー：「フォルダ構成」「実装を始める」「エミュレータ・FPGA・PCB・SDK のフォルダを作る」、トリガー：「文書を整理」「仕様書を書く・直す」「物語・設定を追加」「部品台帳を作る」「決定を記録」「課題を登録」「新しい架空機のプロジェクトを始める」、Fictional Machines のプロジェクトで docs/ 以下を編集するとき。Use when creating, updating, or reorganizing documentation in a Fictional Machines project.
 ---
 
 # Fictional Machines 文書管理
@@ -51,3 +51,13 @@ description: Fictional Machines の個別プロジェクトで文書を作成・
 3. 1つの文書に複数の種類が混ざっている場合（例：仕様書の中の開発史）は、該当部分を正しい種類の文書へ移し、元の場所にはリンクを残す。
 4. 文書間のリンクと、`CLAUDE.md` に書かれたパスを更新する。
 5. これまでの決定のうち記録がないものを、`decisions.md` に起こす。
+
+## 実装を始めるとき
+
+エミュレータ・FPGA・PCB・SDK などのコードやデータを作り始めるときは、次の順で進める。
+
+1. ルール本文の §10「リポジトリ構成（実装）」に従い、使うフォルダだけを作る（`emulator/`、`firmware/`、`sdk/`、`hardware/fpga/` など）。
+2. `docs/impl/<名前>.md` を雛形 `templates/impl.md` から作り、M・S・V の現状と目標を書く。
+3. コードで使う定義（アドレスマップ、レジスタ表など）を、機械が読める形で `docs/spec/` に1か所置く。実装はそこから生成するか参照する。仕様を書き写さない。
+4. 外部のコードを使う前に、出所・版・ライセンスを確かめ、`third_party/` に元のライセンスのまま置く。組み込んだ成果物のライセンスの扱いが未決なら、課題台帳に登録する。
+5. ビルドとテストのコマンドを、プロジェクトの `CLAUDE.md` に書く。

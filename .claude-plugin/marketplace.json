@@ -10,7 +10,7 @@
       "name": "fictional-machines",
       "source": "./",
       "description": "文書管理ルールと雛形（skill: project-docs）。",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "license": "MIT"
     }
   ]
