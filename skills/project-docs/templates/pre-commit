@@ -1,0 +1,44 @@
+#!/bin/sh
+# 公開リポジトリに、ローカルの絶対パス・メールアドレス・トークン・個人を特定する文字列を入れないための走査。
+# 文書管理ルール §08・§11。コミットに追加する行だけを調べる。
+#
+# 有効にする（クローンした後に一度）：
+#   git config core.hooksPath tools/hooks
+# 個人を特定する文字列（名前、ユーザー名など）は、リポジトリに入れず、
+# .git/info/private-patterns に 1 行 1 つの拡張正規表現で書く（大文字・小文字を区別しない。# で始まる行は注釈）。
+
+added=$(git diff --cached -U0 --no-color -- . ':(exclude)tools/hooks/' | grep '^+' | grep -v '^+++')
+[ -z "$added" ] && exit 0
+
+status=0
+
+report() {
+    echo "pre-commit: $1" >&2
+    printf '%s\n' "$2" | head -5 | sed 's/^/  /' >&2
+    status=1
+}
+
+check() {
+    hits=$(printf '%s\n' "$added" | grep -E $3 -e "$2")
+    [ -n "$hits" ] && report "$1" "$hits"
+}
+
+check "ローカルの絶対パス" '[A-Za-z]:[\\/]+(Users|Documents and Settings)[\\/]|/[a-z]/Users/|/Users/[^/ ]+/|/home/[^/ ]+/|AppData'
+check "トークン" 'gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}'
+
+emails=$(printf '%s\n' "$added" | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' | grep -vE 'noreply|^git@github\.com$')
+[ -n "$emails" ] && report "メールアドレス" "$emails"
+
+private="$(git rev-parse --git-dir)/info/private-patterns"
+if [ -f "$private" ]; then
+    while IFS= read -r p || [ -n "$p" ]; do
+        p=$(printf '%s' "$p" | tr -d '\r')
+        case "$p" in '' | '#'*) continue ;; esac
+        check "個人を特定する文字列（private-patterns）" "$p" -i
+    done <"$private"
+fi
+
+if [ "$status" -ne 0 ]; then
+    echo "pre-commit: 上の行を直してからコミットする。誤検出なら、人が確かめたうえで git commit --no-verify を使う。" >&2
+fi
+exit "$status"

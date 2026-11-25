@@ -1,6 +1,6 @@
 ---
 name: project-docs
-description: Fictional Machines の個別プロジェクトで文書を作成・更新・整理するときに使う。仕様（spec）、物語（story）、実在部品の台帳（parts）、製品デザイン（design）、実装（impl）、決定記録（decisions）、課題台帳（open-issues）を種類ごとに分け、記述ステータスと史実・架空の境界を守る。トリガー：「フォルダ構成」「実装を始める」「エミュレータ・FPGA・PCB・SDK のフォルダを作る」、トリガー：「文書を整理」「仕様書を書く・直す」「物語・設定を追加」「部品台帳を作る」「決定を記録」「課題を登録」「新しい架空機のプロジェクトを始める」、Fictional Machines のプロジェクトで docs/ 以下を編集するとき。Use when creating, updating, or reorganizing documentation in a Fictional Machines project.
+description: Fictional Machines の個別プロジェクトで文書を作成・更新・整理するときに使う。仕様（spec）、物語（story）、実在部品の台帳（parts）、製品デザイン（design）、実装（impl）、決定記録（decisions）、課題台帳（open-issues）を種類ごとに分け、記述ステータスと史実・架空の境界を守る。トリガー：「フォルダ構成」「実装を始める」「エミュレータ・FPGA・PCB・SDK のフォルダを作る」、トリガー：「共同作業」「番号がぶつかった」「並行して作業する」、トリガー：「文書を整理」「仕様書を書く・直す」「物語・設定を追加」「部品台帳を作る」「決定を記録」「課題を登録」「新しい架空機のプロジェクトを始める」、Fictional Machines のプロジェクトで docs/ 以下を編集するとき。Use when creating, updating, or reorganizing documentation in a Fictional Machines project.
 ---
 
 # Fictional Machines 文書管理
@@ -30,6 +30,7 @@ description: Fictional Machines の個別プロジェクトで文書を作成・
    | 決定記録 | `templates/decisions.md` |
    | 課題台帳 | `templates/open-issues.md` |
    | 史実の出典台帳 | `templates/sources.md` |
+   | 公開前の走査（pre-commit フック） | `templates/pre-commit` |
 
 4. **記述ステータスを付ける。** 仕様・部品・実装は `[D]`・`[P]`・`[O]`・`[V]`。物語・デザインは `[確定]`・`[仮]`・`[没]`、物語の中の事実は `[史実]`（出典へリンク）・`[架空]`。
 5. **決定と課題を流す。** 不整合や未確認は `open-issues.md` に `OI-` で登録する。決めたことは `decisions.md` に `DR-` で、理由と却下した案とともに書く。反映したら課題を「解決」にして決定へリンクする。 資料に基づく記述の誤り（数値、型番、頁など）は DR を経ずに直し、課題を「解決（修正）」にする。設計の選択、物語の正典、未確定項目の確定は必ず DR を経る。
@@ -42,7 +43,7 @@ description: Fictional Machines の個別プロジェクトで文書を作成・
 - 実在の記録と矛盾させない。架空の部分は明記する。
 - プロジェクトが未確定としている名称・社名・製品名・筐体・ロゴ・UI などを、決定記録を経ずに確定させない。
 - 時代的制約（T2 など）があるプロジェクトでは、指定時点以前の資料だけを年代の根拠にする。
-- 公開リポジトリでは、個人情報・ローカルの絶対パス・トークン・資料の PDF を入れない。一時フォルダは `<scratchpad>` と書く。コミット前に走査する。
+- 公開リポジトリでは、個人情報・ローカルの絶対パス・トークン・資料の PDF を入れない。一時フォルダは `<scratchpad>` と書く。コミット前に走査する（pre-commit フック）。
 
 ## 移行するとき
 
@@ -63,3 +64,14 @@ description: Fictional Machines の個別プロジェクトで文書を作成・
 3. コードで使う定義（アドレスマップ、レジスタ表など）を、機械が読める形で `docs/spec/` に1か所置く。実装はそこから生成するか参照する。仕様を書き写さない。
 4. 外部のコードを使う前に、出所・版・ライセンスを確かめ、`third_party/` に元のライセンスのまま置く。組み込んだ成果物のライセンスの扱いが未決なら、課題台帳に登録する。
 5. ビルドとテストのコマンドを、プロジェクトの `CLAUDE.md` に書く。
+
+## 共同作業
+
+複数の人が、それぞれエージェントを使って同じリポジトリで作業するときは、ルール本文の §11 に従う。プロジェクトの `CLAUDE.md` に「共同作業」の節があれば、それを優先する。
+
+1. 作業を始める前と push の前に `git pull --rebase` をする。小さく区切って、こまめに push する。push した履歴は書き換えない。
+2. DR・OI の番号は push の直前に決める。rebase でぶつかったら、まだ push していない自分の番号を振り直し、参照も直す。
+3. 決定記録と課題台帳は末尾に追記する。自分の変更と関係のない行を整形しない。
+4. ファイルの移動・改名、節の組み替え、表の作り直しは、ブランチを切ってプルリクエストにする。
+5. `.gitattributes`（`* text=auto eol=lf`）と pre-commit フック（`templates/pre-commit` を `tools/hooks/` に置き、`git config core.hooksPath tools/hooks`）がなければ、置くことをユーザーに提案する。
+6. 未確定項目を確定させない。案は DR の案にとどめる。
