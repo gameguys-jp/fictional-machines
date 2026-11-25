@@ -1,0 +1,17 @@
+{
+  "name": "fictional-machines",
+  "owner": {
+    "name": "gameguys-jp",
+    "url": "https://github.com/gameguys-jp"
+  },
+  "description": "Fictional Machines：架空の機械を設計・実装するための基本構想、分類体系、文書管理ルール。",
+  "plugins": [
+    {
+      "name": "fictional-machines",
+      "source": "./",
+      "description": "文書管理ルールと雛形（skill: project-docs）。",
+      "version": "0.1.0",
+      "license": "MIT"
+    }
+  ]
+}
