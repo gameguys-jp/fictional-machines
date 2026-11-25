@@ -3,6 +3,8 @@
 **プロジェクト基本構想・分類体系 v0.6**  
 2026年11月24日
 
+> English version: [Fictional_Machines.en.md](Fictional_Machines.en.md)
+
 ## 01　基本構想と設計原則
 
 ### 目的
