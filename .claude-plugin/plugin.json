@@ -1,6 +1,6 @@
 {
   "name": "fictional-machines",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Fictional Machines の文書管理ルールと雛形。個別プロジェクトの仕様・物語・部品台帳・製品デザイン・実装・決定記録・課題台帳を種類ごとに分けて管理する skill を含む。",
   "author": {
     "name": "gameguys-jp",
